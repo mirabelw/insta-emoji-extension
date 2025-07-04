@@ -1,0 +1,44 @@
+.emoji-autocomplete {
+  background: var(--emoji-bg, #2f3136);
+  border: 1px solid var(--emoji-border, #212225);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  max-height: 180px;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 10000;
+  font-family: sans-serif;
+  min-width: 200px;
+}
+
+/* Each row with emoji */
+.emoji-autocomplete div {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--emoji-text, #b9bbbe);
+  transition: background-color 0.2s ease;
+}
+
+/* Render the emoji icon */
+.emoji-autocomplete div::before {
+  content: attr(data-emoji);
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* Highlighted selection */
+.emoji-autocomplete .selected {
+  background-color: var(--emoji-selected-bg, #40444b);
+  color: var(--emoji-selected-text, #ffffff);
+}
+
+/* Dark scrollbar styling */
+.emoji-autocomplete::-webkit-scrollbar {
+  width: 6px;
+}
+.emoji-autocomplete::-webkit-scrollbar-thumb {
+  background: var(--emoji-scroll, #484b50);
+  border-radius: 3px;
+}

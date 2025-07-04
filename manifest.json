@@ -2,9 +2,15 @@
   "manifest_version": 3,
   "name": "Instagram Emoji Autocomplete",
   "version": "1.0",
-  "description": "Type :emoji and use Tab or click to insert emojis in Instagram DMs like Discord.",
+  "description": "Type emojis faster using Slack/Discord-style shortcuts (e.g. :heart)",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": ["https://www.instagram.com/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["emoji-data.json"],
+      "matches": ["https://www.instagram.com/*"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["https://www.instagram.com/*"],
