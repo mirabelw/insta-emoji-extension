@@ -178,55 +178,35 @@ function setupInput(el) {
     }
   });
 
-inputEl.addEventListener('keyup', e => {
+  inputEl.addEventListener('keyup', e => {
   if ([
     'ArrowUp','ArrowDown','ArrowLeft','ArrowRight',
     'Tab','Enter','Escape',
     'Shift','Control','Alt','Meta'
-  ].includes(e.key)) return;
+  ].includes(e.key)) {
+    return;
+  }
 
   const sel = window.getSelection();
   if (!sel.rangeCount) return;
+
   const node = sel.getRangeAt(0).startContainer;
   const text = node.textContent.slice(0, sel.getRangeAt(0).startOffset);
   const match = /:(\w{1,30})$/.exec(text);
+
   if (!match) {
     if (popup.style.display === 'block') popup.style.display = 'none';
     return;
   }
 
   const partial = match[1].toLowerCase();
+  let aliases = Object.keys(emojiMap).filter(a => a.includes(partial));
 
-  // Get all aliases
-  let aliases = Object.keys(emojiMap);
-
-  // 1. Include exact substring matches
-  let results = aliases.filter(a => a.includes(partial));
-
-  // 2. Add fuzzy matches: letters in order 
-  const fuzzy = (haystack, needle) => {
-    let i = 0, j = 0;
-    while (i < haystack.length && j < needle.length) {
-      if (haystack[i++] === needle[j]) j++;
-    }
-    return j === needle.length;
-  };
-  aliases.forEach(a => {
-    if (!results.includes(a) && fuzzy(a, partial)) {
-      results.push(a);
-    }
-  });
-
-  // Sort by usage
   const usage = JSON.parse(localStorage.getItem('emojiUsage') || '{}');
-  results.sort((a, b) => {
-    const ua = usage[a] || 0, ub = usage[b] || 0;
-    if (ub - ua) return ub - ua;
-    return a.localeCompare(b);
-  });
+  aliases.sort((a, b) => (usage[b] || 0) - (usage[a] || 0));
 
   selectedIndex = 0;
-  updatePopup(results.slice(0, 8), getCaretCoordinates());
+  updatePopup(aliases.slice(0, 8), getCaretCoordinates());
 });
 
 }
