@@ -2,29 +2,27 @@ let emojiMap = {};
 let popup, matches = [];
 let selectedIndex = 0;
 let inputEl;
-let fuse;
-fetch(chrome.runtime.getURL('emoji-data.json'))
-  .then(r => r.json())
-  .then(data => {
-    emojiMap = data;
-    fuse = new Fuse(Object.keys(data), {
-      includeScore: true,
-      threshold: 0.4,
-      ignoreLocation: true
-    });
-    initWhenReady();
-    observeForChanges();
-  });
 
 // Load emoji data
 console.log("Emoji autocomplete script loaded");
 window.addEventListener('focus', () => {
-  if (fuse) initWhenReady();
+  console.log('Tab focused – re-initializing emoji autocomplete');
+  initWhenReady();
 });
+
+fetch(chrome.runtime.getURL('emoji-data.json'))
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
+  .then(data => {
+    emojiMap = data;
+    console.log(`emoji-data.json loaded (${Object.keys(data).length} entries)`);
+  })
+  .catch(err => console.error('Failed to load emoji-data.json:', err));
 
 // Create the suggestion popup
 function createPopup() {
-  if (popup) return;
   popup = document.createElement('div');
   popup.className = 'emoji-autocomplete';
   document.body.appendChild(popup);
@@ -198,17 +196,37 @@ inputEl.addEventListener('keyup', e => {
   }
 
   const partial = match[1].toLowerCase();
-  if (!fuse) return;
-  const results = fuse.search(partial);
-  if (results.length) {
+
+  // Get all aliases
+  let aliases = Object.keys(emojiMap);
+
+  // 1. Include exact substring matches
+  let results = aliases.filter(a => a.includes(partial));
+
+  // 2. Add fuzzy matches: letters in order 
+  const fuzzy = (haystack, needle) => {
+    let i = 0, j = 0;
+    while (i < haystack.length && j < needle.length) {
+      if (haystack[i++] === needle[j]) j++;
+    }
+    return j === needle.length;
+  };
+  aliases.forEach(a => {
+    if (!results.includes(a) && fuzzy(a, partial)) {
+      results.push(a);
+    }
+  });
+
+  // Sort by usage
   const usage = JSON.parse(localStorage.getItem('emojiUsage') || '{}');
-  const aliases = results
-    .map(r => r.item)
-    .sort((a, b) => (usage[b] || 0) - (usage[a] || 0));
+  results.sort((a, b) => {
+    const ua = usage[a] || 0, ub = usage[b] || 0;
+    if (ub - ua) return ub - ua;
+    return a.localeCompare(b);
+  });
 
   selectedIndex = 0;
-  updatePopup(aliases.slice(0, 8), getCaretCoordinates());
-  }
+  updatePopup(results.slice(0, 8), getCaretCoordinates());
 });
 
 }
@@ -248,3 +266,7 @@ function observeForChanges() {
     }
   }).observe(main, { childList: true, subtree: true });
 }
+
+// On extension load:
+initWhenReady();
+observeForChanges();
