@@ -4,7 +4,8 @@ Type emojis faster in Instagram DMs using Slack/Discord-style shortcuts (e.g. :h
 ---
 
 ## Features
-- Autocomplete popup with emoji icon and alias  
+- Autocomplete popup with emoji icon and alias
+- Popup optimized for user's most commonly used emojis
 - Keyboard navigation (↑ ↓, Tab, Enter) & mouse support  
 - Works across multipe chat threads
 
