@@ -14,12 +14,13 @@
   "content_scripts": [
     {
     "matches": ["https://www.instagram.com/*"],
-    "css": ["styles.css"],
     "js": [
-      "https://cdn.jsdelivr.net/npm/fuse.js@7.1.0",
+      "libs/fuse.min.js",
       "content.js"
     ],
+    "css": ["styles.css"],
     "run_at": "document_idle"
     }
   ]
+
 }
