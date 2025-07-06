@@ -5,6 +5,11 @@ let inputEl;
 
 // Load emoji data
 console.log("Emoji autocomplete script loaded");
+window.addEventListener('focus', () => {
+  console.log('Tab focused – re-initializing emoji autocomplete');
+  initWhenReady();
+});
+
 fetch(chrome.runtime.getURL('emoji-data.json'))
   .then(res => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -212,17 +217,21 @@ function initWhenReady() {
   if (!observedContainer) return console.warn('No main container to observe');
 
   const observer = new MutationObserver((mutations) => {
-    const input = document.querySelector('[contenteditable="true"]');
-    if (input && input !== inputEl) {
-      observer.disconnect();
-      console.log('Chat input recreated, re-init autocomplete');
-      createPopup();
-      setupInput(input);
-      observeForChanges(); // re-hook observer
-    }
+  for (const m of mutations) {
+    m.addedNodes.forEach(node => {
+      if (node.nodeType === 1) {
+        const input = node.querySelector && node.querySelector('[contenteditable="true"]');
+        if (input && input !== inputEl) {
+          console.log('New input found');
+          createPopup();
+          setupInput(input);
+        }
+      }
+    });
+  }
 });
 
-  observer.observe(observedContainer, { childList: true, subtree: true });
+  observer.observe(document.body, { subtree: true, childList: true });
 }
 
 function observeForChanges() {
