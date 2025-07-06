@@ -1,5 +1,5 @@
 # Instagram Emoji Extension
-Type emojis faster in Instagram DMs using Slack/Discord-style shortcuts (e.g. :heart)
+Type emojis faster in Instagram DMs using Slack/Discord-style shortcuts (e.g. :red_heart --> ❤️)
 
 ---
 
