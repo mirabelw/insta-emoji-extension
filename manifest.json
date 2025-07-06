@@ -13,10 +13,13 @@
   ],
   "content_scripts": [
     {
-      "matches": ["https://www.instagram.com/*"],
-      "js": ["content.js"],
-      "css": ["styles.css"],
-      "run_at": "document_idle"
+    "matches": ["https://www.instagram.com/*"],
+    "css": ["styles.css"],
+    "js": [
+      "https://cdn.jsdelivr.net/npm/fuse.js@7.1.0",
+      "content.js"
+    ],
+    "run_at": "document_idle"
     }
   ]
 }
