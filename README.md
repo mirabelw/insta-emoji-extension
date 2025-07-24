@@ -19,3 +19,14 @@ Type emojis faster in Instagram DMs using Slack/Discord-style shortcuts (e.g. :r
 4. Click "Load unpacked".
 5. Select the folder containing the extension's source files.
 6. The extension should now appear in your Chrome extensions list and be active.
+
+---
+
+## Local Installation (Firefox)
+1. Clone or download this repository to your local machine.
+2. Open Firefox and navigate to:  
+   `about:debugging`in the URL bar
+3. Click "This Firefox" on the side bar
+4. Click "Load Temporary Add-on"
+5. Select the folder containing the extension's source files and click on any file inside the extension.
+6. The extension should now appear in your Firefox extensions list and be active.
